@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#9b2c2c">
+<link rel="apple-touch-icon" href="icon-512.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>The Love Dare Journey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #9b2c2c;
+      --primary-light: #fff5f5;
+      --primary-hover: #7b1d1d;
+      --accent: #c05621;
+      --bg: #f7fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #2d3748;
+      --text-muted: #718096;
+      --success: #2f855a;
+      --success-bg: #f0fff4;
+      --gold: #d69e2e;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #7b1d1d, #4a1515);
+      color: white;
+      padding: 40px 20px 30px;
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow-lg);
+    }
+    header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: -25px auto 0;
+      padding: 0 16px;
+    }
+
+    /* Stats Card */
+    .dashboard-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .progress-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: #edf2f7;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    .stat-digits {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Top Actions & Sync Bar */
+    .sync-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn:hover { background: #edf2f7; }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    /* Filter & Search */
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      outline: none;
+      font-size: 0.9rem;
+      background: var(--surface);
+    }
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+    }
+    .pill {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+    }
+    .pill.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Day Cards */
+    .days-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .day-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .day-card.completed {
+      border-left: 6px solid var(--success);
+    }
+    .day-card-header {
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .day-card-header:hover {
+      background: #fafafa;
+    }
+    .day-header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .day-badge {
+      width: 44px;
+      height: 44px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      line-height: 1;
+    }
+    .day-badge span { font-size: 1.1rem; }
+    .day-card.completed .day-badge {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+    .day-title-box h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .day-scripture-tag {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .day-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-check {
+      font-size: 1.3rem;
+      color: var(--border);
+    }
+    .day-card.completed .status-check {
+      color: var(--success);
+    }
+
+    /* Card Expanded Content */
+    .day-card-body {
+      display: none;
+      padding: 0 20px 22px;
+      border-top: 1px solid #edf2f7;
+      animation: fadeIn 0.2s ease;
+    }
+    .day-card.expanded .day-card-body { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .verse-quote {
+      margin: 16px 0;
+      padding: 12px 16px;
+      background: #fdf6ec;
+      border-left: 4px solid var(--gold);
+      border-radius: 4px;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: #744210;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-top: 16px;
+      margin-bottom: 6px;
+    }
+    .dare-box {
+      background: var(--primary-light);
+      border: 1px solid #feb2b2;
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: #742a2a;
+    }
+
+    .journal-box {
+      margin-top: 16px;
+    }
+    .journal-prompt {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .journal-textarea {
+      width: 100%;
+      min-height: 110px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      resize: vertical;
+      background: #fff;
+    }
+    .journal-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(155, 44, 44, 0.1);
+    }
+
+    .action-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      gap: 12px;
+    }
+    .custom-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .custom-checkbox input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--success);
+      cursor: pointer;
+    }
+
+    /* Modal for Cloud Sync */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 520px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .modal h2 { font-size: 1.3rem; margin-bottom: 12px; color: var(--primary); }
+    .modal p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px; }
+    .modal textarea {
+      width: 100%;
+      height: 120px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.7rem; }
+      .dashboard-card { grid-template-columns: 1fr; }
+      .controls-row { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>THE LOVE DARE</h1>
+    <p>A 40-Day Journey of Unconditional Love</p>
+  </header>
+
+  <div class="container">
+    <!-- Dashboard Stats -->
+    <div class="dashboard-card">
+      <div class="progress-box">
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <span style="font-weight: 700; font-size: 0.9rem;">Your Progress</span>
+          <span id="progress-pct" style="font-weight: 700; color: var(--primary);">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="progress-bar" class="progress-bar-fill"></div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+          <strong id="completed-count">0</strong> of 40 Dares Completed
+        </div>
+      </div>
+
+      <div class="sync-bar">
+        <button class="btn" onclick="openSyncModal('export')">📤 Export / Sync</button>
+        <button class="btn" onclick="openSyncModal('import')">📥 Import Backup</button>
+        <button class="btn btn-primary" onclick="printJournal()">🖨️ Print Journal</button>
+      </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="controls-row">
+      <input type="text" id="search-input" class="search-input" placeholder="Search dares, titles, scriptures..." oninput="filterDays()" />
+      <div class="filter-pills">
+        <button class="pill active" onclick="setFilter('all', this)">All (40)</button>
+        <button class="pill" onclick="setFilter('pending', this)">In Progress</button>
+        <button class="pill" onclick="setFilter('completed', this)">Completed</button>
+      </div>
+    </div>
+
+    <!-- Days Grid -->
+    <div id="days-container" class="days-grid"></div>
+  </div>
+
+  <!-- Sync Modal -->
+  <div id="sync-modal" class="modal-overlay">
+    <div class="modal">
+      <h2 id="modal-title">Device Sync & Backup</h2>
+      <p id="modal-desc">Copy your sync code and paste it on your other device (phone or PC) to instantly transfer all progress and notes.</p>
+      <textarea id="sync-data-box" spellcheck="false"></textarea>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeSyncModal()">Cancel</button>
+        <button id="modal-action-btn" class="btn btn-primary" onclick="handleModalAction()">Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 40 Days Data extracted from the Love Dare curriculum
+    const LOVE_DARE_DATA = [
+      {
+        day: 1,
+        title: "Love is patient",
+        scripture: "Ephesians 4:2 NIV",
+        verse: "Be completely humble and gentle; be patient, bearing with one another in love.",
+        dare: "For the next day, resolve to demonstrate patience and to say nothing negative to your spouse at all. If the temptation arises, choose not to say anything. It's better to hold your tongue than to say something you'll regret.",
+        prompt: "Did anything happen today to cause anger toward your mate? Were you tempted to think disapproving thoughts and to let them come out in words?"
+      },
+      {
+        day: 2,
+        title: "Love is kind",
+        scripture: "Ephesians 4:32",
+        verse: "Be kind to one another, tender-hearted, forgiving each other, just as God in Christ also has forgiven you.",
+        dare: "In addition to saying nothing negative to your spouse again today, do at least one unexpected gesture as an act of kindness.",
+        prompt: "What discoveries about love did you make today? What specifically did you do in this dare? How did you show kindness?"
+      },
+      {
+        day: 3,
+        title: "Love is not selfish",
+        scripture: "Romans 12:10",
+        verse: "Be devoted to one another in brotherly love; give preference to one another in honor.",
+        dare: "Whatever you put your time, energy, and money into will become more important to you. Buy your spouse something that says, 'I was thinking of you today.'",
+        prompt: "What did you choose to give your spouse? What happened when you gave it?"
+      },
+      {
+        day: 4,
+        title: "Love is thoughtful",
+        scripture: "Psalm 139:17-18",
+        verse: "How precious also are Your thoughts to me... How vast is the sum of them!",
+        dare: "Contact your spouse sometime during the business of the day. Have no agenda other than asking how he or she is doing and if there is anything you could do for them.",
+        prompt: "What did you learn about yourself or your spouse by doing this today? How could this become a natural routine?"
+      },
+      {
+        day: 5,
+        title: "Love is not rude",
+        scripture: "Proverbs 27:14",
+        verse: "He who blesses his friend with a loud voice early in the morning, it will be reckoned a curse to him.",
+        dare: "Ask your spouse to tell you three things that cause him or her to be uncomfortable or irritated with you. You must do so without attacking them or justifying your behavior.",
+        prompt: "What things did your spouse point out about you that need your attention? How did you handle hearing it?"
+      },
+      {
+        day: 6,
+        title: "Love is not irritable",
+        scripture: "Proverbs 16:32",
+        verse: "He who is slow to anger is better than the mighty, and he who rules his spirit, than he who captures a city.",
+        dare: "Choose today to react to tough circumstances in your marriage in loving ways instead of with irritation. Make a list of areas where you need to add margin to your schedule.",
+        prompt: "Where do you need to add margin to your life? When have you recently overreacted? What was your real motivation?"
+      },
+      {
+        day: 7,
+        title: "Love believes the best",
+        scripture: "1 Corinthians 13:7",
+        verse: "[Love] believes all things, hopes all things.",
+        dare: "Get two sheets of paper. On the first, list positive things about your spouse. On the second, list negative things. Place both in a secret place. Thank your spouse for one positive characteristic today.",
+        prompt: "Which list was easier to make? What did this reveal about your thoughts? What attribute did you thank your spouse for?"
+      },
+      {
+        day: 8,
+        title: "Love is not jealous",
+        scripture: "Song of Solomon 8:6 NIV",
+        verse: "Love is as strong as death, its jealousy unyielding as the grave.",
+        dare: "Determine to become your spouse's biggest fan. Take yesterday's list of negative attributes and discreetly burn it. Then share with your spouse how glad you are about a recent success they enjoyed.",
+        prompt: "How hard was it to destroy the list? What are some positive experiences that you can celebrate in the life of your mate?"
+      },
+      {
+        day: 9,
+        title: "Love makes good impressions",
+        scripture: "1 Peter 5:14",
+        verse: "Greet one another with a kiss of love.",
+        dare: "Think of a specific way you'd like to greet your spouse today. Do it with a smile and with enthusiasm to reflect your love for them.",
+        prompt: "When and where did you choose to do your special greeting? How will you change your greeting from this point on?"
+      },
+      {
+        day: 10,
+        title: "Love is unconditional",
+        scripture: "Romans 5:8",
+        verse: "God demonstrates His own love toward us, in that while we were yet sinners, Christ died for us.",
+        dare: "Do something out of the ordinary today for your spouse that proves your love is based on your choice and nothing else (wash car, clean kitchen, buy dessert, fold laundry).",
+        prompt: "Has your love in the past been based on your spouse's attributes/behavior, or on your commitment? How can you continue to show love unconditionally?"
+      },
+      {
+        day: 11,
+        title: "Love cherishes",
+        scripture: "Ephesians 5:28",
+        verse: "Husbands ought also to love their own wives as their own bodies.",
+        dare: "What need does your spouse have that you could meet today? Run an errand, give a back rub/massage, or help with housework. Choose a gesture that says 'I cherish you'.",
+        prompt: "What did you choose to show that you cherish your mate? What did you learn from this experience?"
+      },
+      {
+        day: 12,
+        title: "Love lets the other win",
+        scripture: "Philippians 2:4",
+        verse: "Do not merely look out for your own personal interests, but also for the interests of others.",
+        dare: "Demonstrate love by willingly choosing to give in to an area of disagreement between you and your spouse. Tell them you are putting their preference first.",
+        prompt: "What issue did you choose? What did giving in cost you? How will this help you in the future?"
+      },
+      {
+        day: 13,
+        title: "Love fights fair",
+        scripture: "Mark 3:25",
+        verse: "If a house is divided against itself, that house will not be able to stand.",
+        dare: "Talk with your spouse about establishing healthy rules of engagement. If not ready, write out your own personal rules to 'fight clean' and resolve to abide by them.",
+        prompt: "If your spouse participated, what was their response? What rules did you write for yourself?"
+      },
+      {
+        day: 14,
+        title: "Love takes delight",
+        scripture: "Ecclesiastes 9:9 HCSB",
+        verse: "Enjoy life with the wife you love all the days of your fleeting life.",
+        dare: "Purposefully neglect an activity you would normally do so you can spend quality time with your spouse. Do something they would love to do. Just be together.",
+        prompt: "What did you decide to give up? What did you do together? What new thing did you learn or relearn about your spouse?"
+      },
+      {
+        day: 15,
+        title: "Love is honorable",
+        scripture: "1 Peter 3:7",
+        verse: "Live with your wives in an understanding way and show her honor as a fellow heir of the grace of life.",
+        dare: "Choose a way to show honor and respect to your spouse that is above your normal routine (holding door, putting clothes away, listening attentively).",
+        prompt: "How did you choose to show honor? What was the result? What are other ways you could demonstrate honor?"
+      },
+      {
+        day: 16,
+        title: "Love intercedes",
+        scripture: "3 John 2",
+        verse: "Beloved, I pray that in all respects you may prosper and be in good health, just as your soul prospers.",
+        dare: "Begin praying today for your spouse's heart. Pray for three specific areas where you desire for God to work in your spouse's life and in your marriage.",
+        prompt: "Have you experienced the power of prayer in the past? What did you choose to pray about? Was it easy or foreign?"
+      },
+      {
+        day: 17,
+        title: "Love promotes intimacy",
+        scripture: "Proverbs 17:9 NIV",
+        verse: "He who covers over an offense promotes love, but whoever repeats the matter separates close friends.",
+        dare: "Determine to guard your mate's secrets and pray for them. Really listen when they share personal thoughts and struggles with you. Make them feel safe.",
+        prompt: "How much effort is it for you to hold back criticism? What have you learned about your spouse today from listening?"
+      },
+      {
+        day: 18,
+        title: "Love seeks to understand",
+        scripture: "Proverbs 3:13",
+        verse: "How blessed is the man who finds wisdom, and the man who gains understanding.",
+        dare: "Prepare a special dinner at home, just for the two of you. Focus this time on getting to know your spouse better in areas you've rarely talked about.",
+        prompt: "What did you learn about your spouse that you didn't know before? What made the evening memorable?"
+      },
+      {
+        day: 19,
+        title: "Love is impossible",
+        scripture: "1 John 4:7",
+        verse: "Let us love one another, for love is from God; and everyone who loves is born of God and knows God.",
+        dare: "Look back over the dares from previous days. Were there some that seemed impossible? Ask God for the strength and grace to give you the divine ability to love.",
+        prompt: "What do you believe God is saying to you? What decision have you made in response to this?"
+      },
+      {
+        day: 20,
+        title: "Love is Jesus Christ",
+        scripture: "Romans 5:6",
+        verse: "While we were still helpless, at the right time Christ died for the ungodly.",
+        dare: "Dare to take God at His Word. Dare to trust Jesus Christ for salvation and grace. Ask Him to change your heart and fill you with His love.",
+        prompt: "Write about what this experience has been like for you. What has God shown you today?"
+      },
+      {
+        day: 21,
+        title: "Love is satisfied in God",
+        scripture: "Isaiah 58:11",
+        verse: "The Lord will continually guide you, and satisfy your desire.",
+        dare: "Be intentional today about making a time to pray and read your Bible. Immerse yourself in the love and promises God has for you.",
+        prompt: "How will spending time daily with God change your perspective and marriage? How can you make Him a bigger part of your day?"
+      },
+      {
+        day: 22,
+        title: "Love is faithful",
+        scripture: "Hosea 2:20",
+        verse: "I will betroth you to Me in faithfulness. Then you will know the Lord.",
+        dare: "Say to your spouse today: 'I love you. Period. I choose to love you even if you don't love me in return.'",
+        prompt: "Why is this kind of love impossible without Christ in your heart? How does His presence enable you to love unconditionally?"
+      },
+      {
+        day: 23,
+        title: "Love always protects",
+        scripture: "1 Corinthians 13:7 NIV",
+        verse: "[Love] always protects.",
+        dare: "Remove anything that is hindering your relationship, any addiction or influence that's stealing your affections and turning your heart away from your spouse.",
+        prompt: "What did you throw out or address first? What do you hope the removal of these obstacles will accomplish?"
+      },
+      {
+        day: 24,
+        title: "Love vs. Lust",
+        scripture: "1 John 2:17",
+        verse: "The world is passing away, and also its lusts; but the one who does the will of God lives forever.",
+        dare: "End it now. Identify every object of lust in your life and remove it. Replace it with the sure promises of God and a heart filled with His love.",
+        prompt: "What did you identify as an area of lust or unhealthy distraction? Write about your commitment to seek your spouse with purity."
+      },
+      {
+        day: 25,
+        title: "Love forgives",
+        scripture: "2 Corinthians 2:10",
+        verse: "What I have forgiven, if I have forgiven anything, I did it for your sakes in the presence of Christ.",
+        dare: "Whatever you haven't forgiven in your mate, forgive it today. Let it go. Say from your heart, 'I choose to forgive.'",
+        prompt: "What did you forgive your spouse for today? How long have you carried the weight of it? What freedom do you feel now?"
+      },
+      {
+        day: 26,
+        title: "Love is responsible",
+        scripture: "Romans 2:1 HCSB",
+        verse: "When you judge another, you condemn yourself, since you, the judge, do the same things.",
+        dare: "Pray through your areas of wrongdoing. Ask for God's forgiveness, then humble yourself to admit them to your spouse and ask for forgiveness.",
+        prompt: "What does your mate need to see to know your apology was sincere? How did they receive it?"
+      },
+      {
+        day: 27,
+        title: "Love encourages",
+        scripture: "Psalm 25:20",
+        verse: "Guard my soul and deliver me; do not let me be ashamed, for I take refuge in You.",
+        dare: "Eliminate unrealistic expectations. Think of one area where your spouse felt you were expecting too much, apologize, and assure them of unconditional love.",
+        prompt: "When you place high expectations on your spouse, what does that reveal about yourself? What are better ways to encourage them?"
+      },
+      {
+        day: 28,
+        title: "Love makes sacrifices",
+        scripture: "1 John 3:16 HCSB",
+        verse: "He laid down His life for us. We should also lay down our lives for our brothers.",
+        dare: "What is one of the greatest needs in your spouse's life right now? Purpose to do what you can to lift that burden through a daring act of sacrifice.",
+        prompt: "When you expressed a desire to help, how did your spouse receive it? Are there other burdens you can help carry?"
+      },
+      {
+        day: 29,
+        title: "Love's motivation",
+        scripture: "Ephesians 6:7 HCSB",
+        verse: "Render service with a good attitude, as to the Lord and not to men.",
+        dare: "Before seeing your spouse today, pray for them by name and needs. Say 'I love you', express love tangibly, and thank God for the privilege of loving them.",
+        prompt: "How does loving 'as unto the Lord' change your reactions when your spouse doesn't respond favorably?"
+      },
+      {
+        day: 30,
+        title: "Love brings unity",
+        scripture: "John 17:11",
+        verse: "Father, keep them in Your name... that they may be one even as We are.",
+        dare: "Isolate one area of division in your marriage and look on today as a fresh opportunity to pray about it. Ask God to reveal anything in your own heart threatening oneness.",
+        prompt: "Did the Lord open your eyes to anything new? How do you intend to respond to nurture unity?"
+      },
+      {
+        day: 31,
+        title: "Love and marriage",
+        scripture: "Genesis 2:24",
+        verse: "A man shall leave his father and his mother, and be joined to his wife; and they shall become one flesh.",
+        dare: "Is there a 'leaving' issue you haven't been brave enough to conquer? Confess it today, and commit to making your marriage top priority over every other human relationship.",
+        prompt: "How has this affected your relationship? How can you lovingly build a united household together?"
+      },
+      {
+        day: 32,
+        title: "Love meets sexual needs",
+        scripture: "1 Corinthians 7:3",
+        verse: "The husband must fulfill his duty to his wife, and likewise also the wife to her husband.",
+        dare: "If possible, initiate intimacy with your spouse today in a way that honors what they need from you emotionally and physically.",
+        prompt: "Was this a blessing for both of you? How can you cultivate tender, selfless intimacy moving forward?"
+      },
+      {
+        day: 33,
+        title: "Love completes each other",
+        scripture: "Ecclesiastes 4:11",
+        verse: "If two lie down together they keep warm, but how can one be warm alone?",
+        dare: "Let your spouse know today that you desire to include them in your upcoming decisions and that you need their perspective and counsel.",
+        prompt: "What are some upcoming decisions you can make together? What did you learn about the complementary role of your mate?"
+      },
+      {
+        day: 34,
+        title: "Love celebrates godliness",
+        scripture: "1 Corinthians 13:6",
+        verse: "[Love] does not rejoice in unrighteousness, but rejoices with the truth.",
+        dare: "Find a specific, recent example when your spouse demonstrated Christian character or kindness. Verbally commend them for this today.",
+        prompt: "What example did you choose to recognize? How did your spouse respond to your encouragement?"
+      },
+      {
+        day: 35,
+        title: "Love is accountable",
+        scripture: "Proverbs 15:22 NIV",
+        verse: "Plans fail for lack of counsel, but with many advisers they succeed.",
+        dare: "Find a marriage mentor or strong couple who will be honest and loving with you. Ask God to direct your decisions and discernment.",
+        prompt: "Who did you choose to seek wisdom from? What do you hope to learn from their experience?"
+      },
+      {
+        day: 36,
+        title: "Love is God's Word",
+        scripture: "Psalm 119:105",
+        verse: "Your word is a lamp to my feet and a light to my path.",
+        dare: "Commit to reading the Bible every day. If your spouse is open to it, invite them to read daily Scripture with you to build your marriage on the Rock.",
+        prompt: "What areas of your marriage need God's counsel most? What is He speaking to you through Scripture?"
+      },
+      {
+        day: 37,
+        title: "Love agrees in prayer",
+        scripture: "Matthew 18:19",
+        verse: "If two of you agree on earth about anything that they may ask, it shall be done for them by My Father.",
+        dare: "Ask your spouse if you can begin praying together daily (morning, lunch, or bedtime). Commit your concerns and gratitude to the Lord.",
+        prompt: "If you prayed together, what was the experience like? What did you learn from hearing each other pray?"
+      },
+      {
+        day: 38,
+        title: "Love fulfills dreams",
+        scripture: "Psalm 37:4",
+        verse: "Delight yourself in the Lord; and He will give you the desires of your heart.",
+        dare: "Ask yourself what your mate would want if it was obtainable. Commit this to prayer, and start mapping out a plan to fulfill one of their cherished dreams.",
+        prompt: "What desires are you attempting to meet? How does prioritizing their dreams transform your relationship?"
+      },
+      {
+        day: 39,
+        title: "Love endures",
+        scripture: "1 Corinthians 13:8",
+        verse: "Love never fails.",
+        dare: "Spend time in prayer, then write a heartfelt letter of commitment and resolve to your spouse, declaring that your love is for life no matter what.",
+        prompt: "What hesitations did you have in writing this letter? How did this process deepen your resolve?"
+      },
+      {
+        day: 40,
+        title: "Love is a covenant",
+        scripture: "Ruth 1:16",
+        verse: "Where you go, I will go, and where you lodge, I will lodge. Your people shall be my people, and your God, my God.",
+        dare: "Write out a renewal of your vows and place them in your home. Reaffirm that your marriage is a lifelong, unbreakable covenant before God.",
+        prompt: "What has God revealed to you throughout the Love Dare? How has your view of your marriage and your spouse changed?"
+      }
+    ];
+
+    // Local Storage State Management
+    let appState = JSON.parse(localStorage.getItem('love_dare_state')) || {};
+    let currentFilter = 'all';
+
+    function saveState() {
+      localStorage.setItem('love_dare_state', JSON.stringify(appState));
+      updateDashboard();
+    }
+
+    function toggleDayCard(dayNum) {
+      const card = document.getElementById(`day-card-${dayNum}`);
+      card.classList.toggle('expanded');
+    }
+
+    function toggleComplete(dayNum, isChecked) {
+      if (!appState[dayNum]) appState[dayNum] = {};
+      appState[dayNum].completed = isChecked;
+      if (isChecked && !appState[dayNum].completedAt) {
+        appState[dayNum].completedAt = new Date().toISOString();
+      }
+      const card = document.getElementById(`day-card-${dayNum}`);
+      if (isChecked) {
+        card.classList.add('completed');
+      } else {
+        card.classList.remove('completed');
+      }
+      saveState();
+      filterDays();
+    }
+
+    function saveJournalNote(dayNum, text) {
+      if (!appState[dayNum]) appState[dayNum] = {};
+      appState[dayNum].notes = text;
+      saveState();
+    }
+
+    function updateDashboard() {
+      let completedCount = 0;
+      for (let i = 1; i <= 40; i++) {
+        if (appState[i]?.completed) completedCount++;
+      }
+      const pct = Math.round((completedCount / 40) * 100);
+      document.getElementById('completed-count').textContent = completedCount;
+      document.getElementById('progress-pct').textContent = `${pct}%`;
+      document.getElementById('progress-bar').style.width = `${pct}%`;
+    }
+
+    function renderDays() {
+      const container = document.getElementById('days-container');
+      container.innerHTML = '';
+
+      LOVE_DARE_DATA.forEach(d => {
+        const state = appState[d.day] || {};
+        const isDone = !!state.completed;
+        const note = state.notes || '';
+
+        const card = document.createElement('div');
+        card.className = `day-card ${isDone ? 'completed' : ''}`;
+        card.id = `day-card-${d.day}`;
+        card.dataset.day = d.day;
+        card.dataset.completed = isDone;
+
+        card.innerHTML = `
+          <div class="day-card-header" onclick="toggleDayCard(${d.day})">
+            <div class="day-header-left">
+              <div class="day-badge">DAY<span>${d.day}</span></div>
+              <div class="day-title-box">
+                <h3>${d.title}</h3>
+                <div class="day-scripture-tag">${d.scripture}</div>
+              </div>
+            </div>
+            <div class="day-status">
+              <span class="status-check">${isDone ? '✓' : '○'}</span>
+            </div>
+          </div>
+          <div class="day-card-body">
+            <div class="verse-quote">"${d.verse}"</div>
+            
+            <div class="section-label">Today's Dare</div>
+            <div class="dare-box">${d.dare}</div>
+
+            <div class="journal-box">
+              <div class="section-label">Journal & Reflections</div>
+              <div class="journal-prompt">${d.prompt}</div>
+              <textarea 
+                class="journal-textarea" 
+                placeholder="Write your reflection, discoveries, and prayers for today..."
+                oninput="saveJournalNote(${d.day}, this.value)">${note}</textarea>
+            </div>
+
+            <div class="action-footer">
+              <label class="custom-checkbox">
+                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleComplete(${d.day}, this.checked)">
+                Mark Day ${d.day} as Completed
+              </label>
+              ${state.completedAt ? `<span style="font-size:0.75rem; color:var(--text-muted);">Done on ${new Date(state.completedAt).toLocaleDateString()}</span>` : ''}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      updateDashboard();
+    }
+
+    // Search and Filter Logic
+    function filterDays() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      LOVE_DARE_DATA.forEach(d => {
+        const card = document.getElementById(`day-card-${d.day}`);
+        const state = appState[d.day] || {};
+        const isDone = !!state.completed;
+
+        const matchesSearch = d.title.toLowerCase().includes(query) || 
+                              d.dare.toLowerCase().includes(query) || 
+                              d.scripture.toLowerCase().includes(query) ||
+                              d.verse.toLowerCase().includes(query) ||
+                              (state.notes && state.notes.toLowerCase().includes(query));
+
+        let matchesFilter = true;
+        if (currentFilter === 'completed') matchesFilter = isDone;
+        if (currentFilter === 'pending') matchesFilter = !isDone;
+
+        card.style.display = (matchesSearch && matchesFilter) ? 'block' : 'none';
+      });
+    }
+
+    function setFilter(type, el) {
+      currentFilter = type;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      filterDays();
+    }
+
+    // Sync Modal Handling (JSON Sync Code)
+    let modalMode = 'export';
+    function openSyncModal(mode) {
+      modalMode = mode;
+      const modal = document.getElementById('sync-modal');
+      const title = document.getElementById('modal-title');
+      const desc = document.getElementById('modal-desc');
+      const box = document.getElementById('sync-data-box');
+      const actionBtn = document.getElementById('modal-action-btn');
+
+      modal.classList.add('active');
+      if (mode === 'export') {
+        title.textContent = "Multi-Device Sync Code";
+        desc.textContent = "Copy this sync code and paste it on your phone or PC under 'Import Backup':";
+        box.value = JSON.stringify(appState, null, 2);
+        box.readOnly = true;
+        actionBtn.textContent = "Copy to Clipboard";
+      } else {
+        title.textContent = "Import Progress & Notes";
+        desc.textContent = "Paste the sync code from your other device here and click Restore:";
+        box.value = "";
+        box.readOnly = false;
+        actionBtn.textContent = "Restore & Merge Progress";
+      }
+    }
+
+    function closeSyncModal() {
+      document.getElementById('sync-modal').classList.remove('active');
+    }
+
+    function handleModalAction() {
+      const box = document.getElementById('sync-data-box');
+      if (modalMode === 'export') {
+        box.select();
+        navigator.clipboard.writeText(box.value);
+        alert('Sync code copied to clipboard! Open this app on your other device and choose "Import Backup".');
+        closeSyncModal();
+      } else {
+        try {
+          const parsed = JSON.parse(box.value.trim());
+          if (typeof parsed === 'object') {
+            appState = { ...appState, ...parsed };
+            saveState();
+            renderDays();
+            filterDays();
+            alert('Progress and journal notes successfully restored and synced!');
+            closeSyncModal();
+          } else {
+            throw new Error('Invalid format');
+          }
+        } catch (err) {
+          alert('Invalid sync code format. Please ensure you pasted the entire code.');
+        }
+      }
+    }
+
+    function printJournal() {
+      window.print();
+    }
+
+    // Initialize App
+    window.onload = () => {
+      renderDays();
+    };
+  </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registered!'))
+        .catch(err => console.error('Service Worker registration failed: ', err));
+    });
+  }
+</script>
+</body>
+</html>

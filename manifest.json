@@ -1,0 +1,17 @@
+{
+  "name": "Love Dare Tracker",
+  "short_name": "Love Dare",
+  "description": "A 40-Day Journey of Unconditional Love",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7fafc",
+  "theme_color": "#9b2c2c",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
